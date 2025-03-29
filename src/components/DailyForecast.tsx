@@ -37,7 +37,7 @@ const DailyForecast: React.FC = () => {
 
   return (
     <div className="glass-panel p-4 mt-4 animate-fade-in">
-      <h3 className="text-lg font-semibold mb-4">7-Day Forecast</h3>
+      <h3 className="text-lg font-semibold mb-4 text-foreground">7-Day Forecast</h3>
       
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
         {daily.slice(0, 7).map((day, index) => {
@@ -50,7 +50,7 @@ const DailyForecast: React.FC = () => {
           return (
             <div 
               key={index} 
-              className="bg-background/50 rounded-lg p-4 card-hover"
+              className="bg-background/50 rounded-lg p-4 card-hover text-foreground"
             >
               <div className="flex justify-between items-center mb-2">
                 <div>

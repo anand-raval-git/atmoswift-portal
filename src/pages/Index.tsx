@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { WeatherProvider } from '@/contexts/WeatherContext';
 import Header from '@/components/Header';
@@ -13,7 +13,7 @@ const Index: React.FC = () => {
   return (
     <ThemeProvider>
       <WeatherProvider>
-        <div className="min-h-screen flex flex-col">
+        <div className="min-h-screen flex flex-col bg-background">
           <div className="container mx-auto px-4 flex-grow">
             <Header />
             <UnitToggle />
