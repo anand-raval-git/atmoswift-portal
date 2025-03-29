@@ -1,0 +1,199 @@
+import React, { createContext, useContext, useState, useEffect } from 'react';
+import { 
+  WeatherData, 
+  WeatherResponseData, 
+  HourlyForecast, 
+  DailyForecast,
+  fetchWeatherByCity,
+  fetchWeatherByCoordinates
+} from '../services/weatherService';
+import { toast } from 'sonner';
+
+interface WeatherContextType {
+  weatherData: WeatherResponseData | null;
+  isLoading: boolean;
+  error: string | null;
+  lastUpdated: Date | null;
+  units: 'metric' | 'imperial';
+  setUnits: (units: 'metric' | 'imperial') => void;
+  searchCity: (city: string) => Promise<void>;
+  getCurrentLocation: () => Promise<void>;
+  refreshWeather: () => Promise<void>;
+}
+
+const WeatherContext = createContext<WeatherContextType | null>(null);
+
+export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+  const [weatherData, setWeatherData] = useState<WeatherResponseData | null>(null);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
+  const [units, setUnits] = useState<'metric' | 'imperial'>(() => {
+    return localStorage.getItem('units') === 'imperial' ? 'imperial' : 'metric';
+  });
+  const [lastSearchedLocation, setLastSearchedLocation] = useState<{
+    type: 'city' | 'coordinates';
+    value: string | { lat: number; lon: number };
+  } | null>(() => {
+    const saved = localStorage.getItem('lastLocation');
+    return saved ? JSON.parse(saved) : null;
+  });
+
+  // Update localStorage when units change
+  useEffect(() => {
+    localStorage.setItem('units', units);
+    
+    // If we have a last searched location, refresh the weather with new units
+    if (lastSearchedLocation && !isLoading) {
+      refreshWeather();
+    }
+  }, [units]);
+
+  // Save last searched location to localStorage
+  useEffect(() => {
+    if (lastSearchedLocation) {
+      localStorage.setItem('lastLocation', JSON.stringify(lastSearchedLocation));
+    }
+  }, [lastSearchedLocation]);
+
+  // Initial weather fetch
+  useEffect(() => {
+    const fetchInitialWeather = async () => {
+      // If we have a last searched location, use that
+      if (lastSearchedLocation) {
+        if (lastSearchedLocation.type === 'city') {
+          await searchCity(lastSearchedLocation.value as string);
+        } else {
+          const { lat, lon } = lastSearchedLocation.value as { lat: number; lon: number };
+          await fetchWeatherForCoordinates(lat, lon);
+        }
+      } else {
+        // Otherwise use geolocation
+        await getCurrentLocation();
+      }
+    };
+
+    fetchInitialWeather();
+  }, []);
+
+  const searchCity = async (city: string) => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const data = await fetchWeatherByCity(city, units);
+      
+      if (data) {
+        setWeatherData(data);
+        setLastUpdated(new Date());
+        setLastSearchedLocation({ type: 'city', value: city });
+      }
+    } catch (err) {
+      setError('Failed to fetch weather data. Please try again.');
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const fetchWeatherForCoordinates = async (lat: number, lon: number) => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      const data = await fetchWeatherByCoordinates(lat, lon, units);
+      
+      if (data) {
+        setWeatherData(data);
+        setLastUpdated(new Date());
+        setLastSearchedLocation({ 
+          type: 'coordinates', 
+          value: { lat, lon } 
+        });
+      }
+    } catch (err) {
+      setError('Failed to fetch weather data. Please try again.');
+      console.error(err);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const getCurrentLocation = async () => {
+    setIsLoading(true);
+    setError(null);
+    
+    try {
+      if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(
+          async (position) => {
+            await fetchWeatherForCoordinates(
+              position.coords.latitude,
+              position.coords.longitude
+            );
+          },
+          (err) => {
+            console.error('Geolocation error:', err);
+            setError('Unable to get your location. Please allow location access or search for a city.');
+            setIsLoading(false);
+            // Try to use IP-based location or default to a major city
+            searchCity('New York');
+          }
+        );
+      } else {
+        setError('Geolocation is not supported by your browser. Please search for a city.');
+        setIsLoading(false);
+        // Default to a major city
+        searchCity('New York');
+      }
+    } catch (err) {
+      setError('Failed to get your location. Please try again.');
+      console.error(err);
+      setIsLoading(false);
+    }
+  };
+
+  const refreshWeather = async () => {
+    if (!lastSearchedLocation) {
+      await getCurrentLocation();
+      return;
+    }
+
+    if (lastSearchedLocation.type === 'city') {
+      await searchCity(lastSearchedLocation.value as string);
+    } else {
+      const { lat, lon } = lastSearchedLocation.value as { lat: number; lon: number };
+      await fetchWeatherForCoordinates(lat, lon);
+    }
+
+    toast.success('Weather data updated!');
+  };
+
+  return (
+    <WeatherContext.Provider
+      value={{
+        weatherData,
+        isLoading,
+        error,
+        lastUpdated,
+        units,
+        setUnits,
+        searchCity,
+        getCurrentLocation,
+        refreshWeather
+      }}
+    >
+      {children}
+    </WeatherContext.Provider>
+  );
+};
+
+export const useWeather = (): WeatherContextType => {
+  const context = useContext(WeatherContext);
+  
+  if (!context) {
+    throw new Error('useWeather must be used within a WeatherProvider');
+  }
+  
+  return context;
+};
