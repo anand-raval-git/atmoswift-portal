@@ -7,12 +7,13 @@ import {
   Wind, 
   Eye, 
   Sunrise, 
-  Sunset
+  Sunset,
+  Sun
 } from 'lucide-react';
 import { formatTime, getWindDirection, getUVIndexLabel, getWeatherIconUrl } from '@/services/weatherService';
 
 const CurrentWeather: React.FC = () => {
-  const { weatherData, units, isLoading, useDummyData } = useWeather();
+  const { weatherData, units, isLoading } = useWeather();
   
   if (isLoading) {
     return (
@@ -60,12 +61,6 @@ const CurrentWeather: React.FC = () => {
 
   return (
     <div className="glass-panel p-6 animate-fade-in">
-      {useDummyData && (
-        <div className="mb-4 py-1 px-3 bg-orange/20 dark:bg-yellow/20 text-orange dark:text-yellow rounded-md text-xs inline-block">
-          Using test data
-        </div>
-      )}
-      
       <div className="text-center mb-6">
         <h2 className="text-xl md:text-2xl font-bold">
           {current.city}, {current.country}
@@ -79,13 +74,13 @@ const CurrentWeather: React.FC = () => {
             alt={description}
             className="w-20 h-20"
           />
-          <div className="text-5xl md:text-6xl font-bold ml-2 text-foreground">
+          <div className="text-5xl md:text-6xl font-bold ml-2">
             {current.temp}{tempUnit}
           </div>
         </div>
         
         <div className="text-center md:text-left md:ml-6">
-          <p className="text-lg md:text-xl text-foreground">{description}</p>
+          <p className="text-lg md:text-xl">{description}</p>
           <p className="text-sm text-muted-foreground">
             Feels like {current.feels_like}{tempUnit}
           </p>
@@ -93,7 +88,7 @@ const CurrentWeather: React.FC = () => {
       </div>
       
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-        <div className="flex flex-col items-center p-3 bg-background/50 rounded-lg text-foreground">
+        <div className="flex flex-col items-center p-3 bg-background/50 rounded-lg">
           <Thermometer className="h-6 w-6 mb-1 text-sky dark:text-cyan" />
           <span className="text-xs text-muted-foreground">UV Index</span>
           <span className={`text-sm font-semibold ${uvIndex.color}`}>
@@ -101,13 +96,13 @@ const CurrentWeather: React.FC = () => {
           </span>
         </div>
         
-        <div className="flex flex-col items-center p-3 bg-background/50 rounded-lg text-foreground">
+        <div className="flex flex-col items-center p-3 bg-background/50 rounded-lg">
           <Droplets className="h-6 w-6 mb-1 text-sky dark:text-cyan" />
           <span className="text-xs text-muted-foreground">Humidity</span>
           <span className="text-sm font-semibold">{current.humidity}%</span>
         </div>
         
-        <div className="flex flex-col items-center p-3 bg-background/50 rounded-lg text-foreground">
+        <div className="flex flex-col items-center p-3 bg-background/50 rounded-lg">
           <Wind className="h-6 w-6 mb-1 text-sky dark:text-cyan" />
           <span className="text-xs text-muted-foreground">Wind</span>
           <span className="text-sm font-semibold">
@@ -115,7 +110,7 @@ const CurrentWeather: React.FC = () => {
           </span>
         </div>
         
-        <div className="flex flex-col items-center p-3 bg-background/50 rounded-lg text-foreground">
+        <div className="flex flex-col items-center p-3 bg-background/50 rounded-lg">
           <Eye className="h-6 w-6 mb-1 text-sky dark:text-cyan" />
           <span className="text-xs text-muted-foreground">Visibility</span>
           <span className="text-sm font-semibold">
@@ -123,13 +118,13 @@ const CurrentWeather: React.FC = () => {
           </span>
         </div>
         
-        <div className="flex flex-col items-center p-3 bg-background/50 rounded-lg text-foreground">
+        <div className="flex flex-col items-center p-3 bg-background/50 rounded-lg">
           <Sunrise className="h-6 w-6 mb-1 text-orange dark:text-yellow" />
           <span className="text-xs text-muted-foreground">Sunrise</span>
           <span className="text-sm font-semibold">{sunriseTime}</span>
         </div>
         
-        <div className="flex flex-col items-center p-3 bg-background/50 rounded-lg text-foreground">
+        <div className="flex flex-col items-center p-3 bg-background/50 rounded-lg">
           <Sunset className="h-6 w-6 mb-1 text-orange dark:text-yellow" />
           <span className="text-xs text-muted-foreground">Sunset</span>
           <span className="text-sm font-semibold">{sunsetTime}</span>

@@ -39,18 +39,18 @@ const HourlyForecast: React.FC = () => {
   return (
     <div className="glass-panel p-4 mt-4 animate-fade-in">
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-semibold text-foreground">Hourly Forecast</h3>
+        <h3 className="text-lg font-semibold">Hourly Forecast</h3>
         <div className="flex gap-1">
           <button 
             onClick={() => scroll('left')} 
-            className="p-1 rounded-full bg-background/50 hover:bg-background/80 transition-colors text-foreground"
+            className="p-1 rounded-full bg-background/50 hover:bg-background/80 transition-colors"
             aria-label="Scroll left"
           >
             <ChevronLeft className="h-5 w-5" />
           </button>
           <button 
             onClick={() => scroll('right')} 
-            className="p-1 rounded-full bg-background/50 hover:bg-background/80 transition-colors text-foreground"
+            className="p-1 rounded-full bg-background/50 hover:bg-background/80 transition-colors"
             aria-label="Scroll right"
           >
             <ChevronRight className="h-5 w-5" />
@@ -69,7 +69,7 @@ const HourlyForecast: React.FC = () => {
           return (
             <div 
               key={index} 
-              className="flex-shrink-0 flex flex-col items-center p-3 bg-background/50 rounded-lg card-hover min-w-[5rem] text-foreground"
+              className="flex-shrink-0 flex flex-col items-center p-3 bg-background/50 rounded-lg card-hover min-w-[5rem]"
             >
               <span className="text-sm font-medium">
                 {index === 0 ? 'Now' : time}

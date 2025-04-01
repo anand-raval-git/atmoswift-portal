@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { 
   WeatherData, 
@@ -8,7 +7,6 @@ import {
   fetchWeatherByCity,
   fetchWeatherByCoordinates
 } from '../services/weatherService';
-import { getDummyWeatherData } from '../services/dummyWeatherData';
 import { toast } from 'sonner';
 
 interface WeatherContextType {
@@ -21,9 +19,6 @@ interface WeatherContextType {
   searchCity: (city: string) => Promise<void>;
   getCurrentLocation: () => Promise<void>;
   refreshWeather: () => Promise<void>;
-  loadDummyData: () => void;
-  useDummyData: boolean;
-  setUseDummyData: (use: boolean) => void;
 }
 
 const WeatherContext = createContext<WeatherContextType | null>(null);
@@ -35,9 +30,6 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [units, setUnits] = useState<'metric' | 'imperial'>(() => {
     return localStorage.getItem('units') === 'imperial' ? 'imperial' : 'metric';
-  });
-  const [useDummyData, setUseDummyData] = useState<boolean>(() => {
-    return localStorage.getItem('useDummyData') === 'true';
   });
   const [lastSearchedLocation, setLastSearchedLocation] = useState<{
     type: 'city' | 'coordinates';
@@ -52,23 +44,10 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({ child
     localStorage.setItem('units', units);
     
     // If we have a last searched location, refresh the weather with new units
-    if (lastSearchedLocation && !isLoading && !useDummyData) {
+    if (lastSearchedLocation && !isLoading) {
       refreshWeather();
     }
   }, [units]);
-
-  // Update localStorage when useDummyData changes
-  useEffect(() => {
-    localStorage.setItem('useDummyData', useDummyData.toString());
-    
-    // If useDummyData is true, load dummy data
-    if (useDummyData) {
-      loadDummyData();
-    } else if (lastSearchedLocation && !isLoading) {
-      // If we're switching back to real data, refresh weather
-      refreshWeather();
-    }
-  }, [useDummyData]);
 
   // Save last searched location to localStorage
   useEffect(() => {
@@ -80,12 +59,6 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({ child
   // Initial weather fetch
   useEffect(() => {
     const fetchInitialWeather = async () => {
-      // If we're using dummy data, just load that
-      if (useDummyData) {
-        loadDummyData();
-        return;
-      }
-      
       // If we have a last searched location, use that
       if (lastSearchedLocation) {
         if (lastSearchedLocation.type === 'city') {
@@ -103,19 +76,7 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({ child
     fetchInitialWeather();
   }, []);
 
-  const loadDummyData = () => {
-    setWeatherData(getDummyWeatherData());
-    setLastUpdated(new Date());
-    setError(null);
-    toast.success('Dummy data loaded successfully!');
-  };
-
   const searchCity = async (city: string) => {
-    if (useDummyData) {
-      loadDummyData();
-      return;
-    }
-    
     setIsLoading(true);
     setError(null);
     
@@ -136,11 +97,6 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const fetchWeatherForCoordinates = async (lat: number, lon: number) => {
-    if (useDummyData) {
-      loadDummyData();
-      return;
-    }
-    
     setIsLoading(true);
     setError(null);
     
@@ -164,11 +120,6 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const getCurrentLocation = async () => {
-    if (useDummyData) {
-      loadDummyData();
-      return;
-    }
-    
     setIsLoading(true);
     setError(null);
     
@@ -203,11 +154,6 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const refreshWeather = async () => {
-    if (useDummyData) {
-      loadDummyData();
-      return;
-    }
-    
     if (!lastSearchedLocation) {
       await getCurrentLocation();
       return;
@@ -234,10 +180,7 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({ child
         setUnits,
         searchCity,
         getCurrentLocation,
-        refreshWeather,
-        loadDummyData,
-        useDummyData,
-        setUseDummyData
+        refreshWeather
       }}
     >
       {children}
