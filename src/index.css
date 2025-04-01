@@ -7,52 +7,77 @@
 
 @layer base {
   :root {
-    --background: 210 33% 96%;   /* #EBF4FF to #E2E8F0 gradient */
-    --foreground: 222 47% 11%;   /* #1A202C deep graphite */
+    --background: 90 5% 96%;    /* #F5F6F5 */
+    --foreground: 220 26% 22%;  /* #2D3748 */
 
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 220 26% 22%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
+    --popover-foreground: 220 26% 22%;
 
-    --primary: 222 47% 11%;
-    --primary-foreground: 210 33% 96%;
+    --primary: 220 26% 22%;     /* #2D3748 */
+    --primary-foreground: 90 5% 96%;
 
     --secondary: 210 20% 96.1%;
-    --secondary-foreground: 222 47% 11%;
+    --secondary-foreground: 220 26% 22%;
 
     --muted: 210 20% 96.1%;
     --muted-foreground: 215.4 16.3% 46.9%;
 
     --accent: 210 20% 96.1%;
-    --accent-foreground: 222 47% 11%;
+    --accent-foreground: 220 26% 22%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222 47% 11%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 224 71.4% 4.1%;
 
     --radius: 0.75rem;
 
-    /* Custom brand colors */
-    --sky: 186 100% 34%;        /* #00A3B3 teal blue */
-    --sky-hover: 186 100% 29%;   /* #008894 darker teal */
+    --sky: 199 89% 59.6%;       /* #38BDF8 */
+    --sky-hover: 199 89% 50%;   /* #0EA5E9 */
     
-    --orange: 35 92% 55%;        /* #F6A623 warm amber */
-    --orange-hover: 35 92% 45%;   /* #D68B0D darker amber */
+    --orange: 35.5 91.7% 32.9%; /* #F59E0B */
+    --orange-hover: 35.5 91.7% 27%;
 
-    --cyan: 186 100% 34%;        /* #00A3B3 teal blue - same as sky for consistency */
-    --cyan-hover: 186 100% 29%;  /* #008894 darker teal - same as sky-hover */
+    --cyan: 170 84% 65%;        /* #5EEAD4 */
+    --cyan-hover: 170 84% 55%;  /* #2DD4BF */
     
-    --yellow: 35 92% 55%;        /* #F6A623 warm amber - same as orange for consistency */
-    --yellow-hover: 35 92% 45%;  /* #D68B0D darker amber - same as orange-hover */
+    --yellow: 43 96% 56%;       /* #FBBF24 */
+    --yellow-hover: 43 96% 46%; /* #F59E0B */
   }
 
   .dark {
-    /* ... keep existing code (dark theme variables) */
+    --background: 217 33% 19.5%; /* #1E2A44 */
+    --foreground: 210 20% 92%;   /* #E2E8F0 */
+
+    --card: 217 33% 25%;
+    --card-foreground: 210 20% 92%;
+
+    --popover: 217 33% 19.5%;
+    --popover-foreground: 210 20% 92%;
+
+    --primary: 210 20% 92%;      /* #E2E8F0 */
+    --primary-foreground: 217 33% 19.5%;
+
+    --secondary: 217.2 32.6% 26%;
+    --secondary-foreground: 210 20% 92%;
+
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 75.1%;
+
+    --accent: 217.2 32.6% 27.5%;
+    --accent-foreground: 210 20% 92%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 217.2 32.6% 27.5%;
+    --input: 217.2 32.6% 27.5%;
+    --ring: 212.7 26.8% 83.9%;
   }
 }
 
@@ -89,13 +114,13 @@
     @apply text-orange dark:text-yellow;
   }
   
-  /* Improved light mode styles */
+  /* Improved white mode styles */
   .light-mode-panel {
     @apply bg-white/90 border border-gray-200 shadow-sm;
   }
   
   .light-mode-text {
-    @apply text-foreground font-medium;
+    @apply text-gray-800;
   }
   
   .light-mode-subtext {
@@ -119,9 +144,4 @@
 
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-sky/50 dark:bg-cyan/50;
-}
-
-/* Add a subtle gradient background for light mode */
-.light-gradient-bg {
-  background: linear-gradient(135deg, #EBF4FF 0%, #E2E8F0 100%);
 }
