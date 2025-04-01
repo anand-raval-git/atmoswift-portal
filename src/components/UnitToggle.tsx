@@ -15,8 +15,8 @@ const UnitToggle: React.FC = () => {
           size="sm"
           className={`px-3 py-1 rounded-full transition-colors ${
             units === 'metric' 
-              ? 'bg-sky/80 dark:bg-cyan/80 text-white' 
-              : 'hover:bg-sky/20 dark:hover:bg-cyan/20'
+              ? 'bg-sky text-white' 
+              : 'hover:bg-sky/20'
           }`}
           onClick={() => setUnits('metric')}
         >
@@ -27,8 +27,8 @@ const UnitToggle: React.FC = () => {
           size="sm"
           className={`px-3 py-1 rounded-full transition-colors ${
             units === 'imperial' 
-              ? 'bg-sky/80 dark:bg-cyan/80 text-white' 
-              : 'hover:bg-sky/20 dark:hover:bg-cyan/20'
+              ? 'bg-sky text-white' 
+              : 'hover:bg-sky/20'
           }`}
           onClick={() => setUnits('imperial')}
         >
@@ -42,8 +42,8 @@ const UnitToggle: React.FC = () => {
           size="sm"
           className={`px-3 py-1 rounded-full transition-colors flex items-center gap-1 ${
             useDummyData 
-              ? 'bg-orange/80 dark:bg-yellow/80 text-white' 
-              : 'hover:bg-orange/20 dark:hover:bg-yellow/20'
+              ? 'bg-orange text-white' 
+              : 'hover:bg-orange/20'
           }`}
           onClick={() => setUseDummyData(!useDummyData)}
           title="Toggle dummy data for testing"
