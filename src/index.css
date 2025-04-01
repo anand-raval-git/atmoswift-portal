@@ -8,25 +8,25 @@
 @layer base {
   :root {
     --background: 90 5% 96%;    /* #F5F6F5 */
-    --foreground: 220 26% 22%;  /* #2D3748 */
+    --foreground: 215 30% 25%;  /* #2C3E50 */
 
     --card: 0 0% 100%;
-    --card-foreground: 220 26% 22%;
+    --card-foreground: 215 30% 25%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 220 26% 22%;
+    --popover-foreground: 215 30% 25%;
 
-    --primary: 220 26% 22%;     /* #2D3748 */
+    --primary: 215 30% 25%;     /* #2C3E50 */
     --primary-foreground: 90 5% 96%;
 
     --secondary: 210 20% 96.1%;
-    --secondary-foreground: 220 26% 22%;
+    --secondary-foreground: 215 30% 25%;
 
     --muted: 210 20% 96.1%;
-    --muted-foreground: 215.4 16.3% 56.9%;
+    --muted-foreground: 220 14% 55%;  /* #7F8C8D */
 
     --accent: 210 20% 96.1%;
-    --accent-foreground: 220 26% 22%;
+    --accent-foreground: 215 30% 25%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 0 0% 98%;
@@ -37,17 +37,17 @@
 
     --radius: 0.75rem;
 
-    --sky: 199 89% 59.6%;       /* #38BDF8 */
-    --sky-hover: 199 89% 50%;   /* #0EA5E9 */
-    
-    --orange: 35.5 91.7% 32.9%; /* #F59E0B */
-    --orange-hover: 35.5 91.7% 27%;
+    --sky: 204 77% 53%;       /* #3498DB */
+    --sky-hover: 204 77% 45%;
 
-    --cyan: 170 84% 65%;        /* #5EEAD4 */
-    --cyan-hover: 170 84% 55%;  /* #2DD4BF */
+    --orange: 28 80% 52%;     /* #E67E22 */
+    --orange-hover: 28 80% 45%;
+
+    --cyan: 204 77% 53%;      /* Match sky for light mode */
+    --cyan-hover: 204 77% 45%;
     
-    --yellow: 43 96% 56%;       /* #FBBF24 */
-    --yellow-hover: 43 96% 46%; /* #F59E0B */
+    --yellow: 28 80% 52%;     /* Match orange for light mode */
+    --yellow-hover: 28 80% 45%;
   }
 
   .dark {
@@ -92,14 +92,16 @@
   
   body {
     @apply bg-background text-foreground font-opensans;
+    font-size: 16px;
   }
   
   h1, h2, h3, h4, h5, h6 {
     @apply font-nunito font-bold;
+    font-size: 24px;
   }
 
   .glass-panel {
-    @apply bg-white/20 dark:bg-black/20 backdrop-blur-sm border border-white/30 dark:border-white/10 rounded-lg shadow-lg;
+    @apply bg-white/20 dark:bg-black/20 backdrop-blur-sm border border-white/30 dark:border-white/10 rounded-lg shadow-[0_2px_4px_rgba(0,0,0,0.1)] dark:shadow-lg;
   }
 
   .card-hover {

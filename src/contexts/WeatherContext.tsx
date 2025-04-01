@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { 
   WeatherData, 
@@ -7,6 +8,7 @@ import {
   fetchWeatherByCity,
   fetchWeatherByCoordinates
 } from '../services/weatherService';
+import { getMockWeatherData } from '../utils/mockWeatherData';
 import { toast } from 'sonner';
 
 interface WeatherContextType {
@@ -19,6 +21,8 @@ interface WeatherContextType {
   searchCity: (city: string) => Promise<void>;
   getCurrentLocation: () => Promise<void>;
   refreshWeather: () => Promise<void>;
+  useMockData: boolean;
+  setUseMockData: (useMock: boolean) => void;
 }
 
 const WeatherContext = createContext<WeatherContextType | null>(null);
@@ -30,6 +34,9 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
   const [units, setUnits] = useState<'metric' | 'imperial'>(() => {
     return localStorage.getItem('units') === 'imperial' ? 'imperial' : 'metric';
+  });
+  const [useMockData, setUseMockData] = useState<boolean>(() => {
+    return localStorage.getItem('useMockData') === 'true';
   });
   const [lastSearchedLocation, setLastSearchedLocation] = useState<{
     type: 'city' | 'coordinates';
@@ -49,6 +56,16 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
   }, [units]);
 
+  // Update localStorage when mock data preference changes
+  useEffect(() => {
+    localStorage.setItem('useMockData', useMockData.toString());
+    if (useMockData) {
+      loadMockData();
+    } else if (lastSearchedLocation && !isLoading) {
+      refreshWeather();
+    }
+  }, [useMockData]);
+
   // Save last searched location to localStorage
   useEffect(() => {
     if (lastSearchedLocation) {
@@ -59,6 +76,11 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({ child
   // Initial weather fetch
   useEffect(() => {
     const fetchInitialWeather = async () => {
+      if (useMockData) {
+        loadMockData();
+        return;
+      }
+      
       // If we have a last searched location, use that
       if (lastSearchedLocation) {
         if (lastSearchedLocation.type === 'city') {
@@ -76,7 +98,20 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({ child
     fetchInitialWeather();
   }, []);
 
+  const loadMockData = () => {
+    const mockData = getMockWeatherData(units);
+    setWeatherData(mockData);
+    setLastUpdated(new Date());
+    setError(null);
+  };
+
   const searchCity = async (city: string) => {
+    if (useMockData) {
+      loadMockData();
+      setLastSearchedLocation({ type: 'city', value: city });
+      return;
+    }
+    
     setIsLoading(true);
     setError(null);
     
@@ -97,6 +132,12 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const fetchWeatherForCoordinates = async (lat: number, lon: number) => {
+    if (useMockData) {
+      loadMockData();
+      setLastSearchedLocation({ type: 'coordinates', value: { lat, lon } });
+      return;
+    }
+    
     setIsLoading(true);
     setError(null);
     
@@ -120,6 +161,11 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const getCurrentLocation = async () => {
+    if (useMockData) {
+      loadMockData();
+      return;
+    }
+    
     setIsLoading(true);
     setError(null);
     
@@ -154,6 +200,12 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const refreshWeather = async () => {
+    if (useMockData) {
+      loadMockData();
+      toast.success('Weather data updated!');
+      return;
+    }
+
     if (!lastSearchedLocation) {
       await getCurrentLocation();
       return;
@@ -180,7 +232,9 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({ child
         setUnits,
         searchCity,
         getCurrentLocation,
-        refreshWeather
+        refreshWeather,
+        useMockData,
+        setUseMockData
       }}
     >
       {children}

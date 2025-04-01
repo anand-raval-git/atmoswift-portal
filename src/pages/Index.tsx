@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { ThemeProvider } from '@/contexts/ThemeContext';
 import { WeatherProvider } from '@/contexts/WeatherContext';
 import Header from '@/components/Header';
@@ -7,6 +7,7 @@ import CurrentWeather from '@/components/CurrentWeather';
 import HourlyForecast from '@/components/HourlyForecast';
 import DailyForecast from '@/components/DailyForecast';
 import UnitToggle from '@/components/UnitToggle';
+import MockDataToggle from '@/components/MockDataToggle';
 import Footer from '@/components/Footer';
 
 const Index: React.FC = () => {
@@ -16,7 +17,10 @@ const Index: React.FC = () => {
         <div className="min-h-screen flex flex-col">
           <div className="container mx-auto px-4 flex-grow">
             <Header />
-            <UnitToggle />
+            <div className="flex justify-end items-center gap-4 flex-wrap mt-4">
+              <MockDataToggle />
+              <UnitToggle />
+            </div>
             <main className="py-4">
               <CurrentWeather />
               <HourlyForecast />
