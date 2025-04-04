@@ -10,6 +10,7 @@ import UnitToggle from '@/components/UnitToggle';
 import MockDataToggle from '@/components/MockDataToggle';
 import Projects from '@/components/Projects';
 import Footer from '@/components/Footer';
+import { Toaster } from '@/components/ui/toaster';
 
 const Index: React.FC = () => {
   return (
@@ -30,6 +31,7 @@ const Index: React.FC = () => {
             </main>
           </div>
           <Footer />
+          <Toaster />
         </div>
       </WeatherProvider>
     </ThemeProvider>

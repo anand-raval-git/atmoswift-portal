@@ -7,50 +7,56 @@
 
 @layer base {
   :root {
-    --background: 90 5% 96%;    /* #F5F6F5 */
-    --foreground: 215 30% 25%;  /* #2C3E50 */
+    /* Light Mode Colors */
+    --background: 210 30% 98%;    /* #F7F9FB */
+    --foreground: 215 45% 19%;    /* #1A2E44 */
 
-    --card: 0 0% 100%;
-    --card-foreground: 215 30% 25%;
+    --card: 0 0% 100%;            /* #FFFFFF */
+    --card-foreground: 215 45% 19%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 215 30% 25%;
+    --popover-foreground: 215 45% 19%;
 
-    --primary: 215 30% 25%;     /* #2C3E50 */
-    --primary-foreground: 90 5% 96%;
+    --primary: 215 45% 19%;       /* #1A2E44 */
+    --primary-foreground: 210 30% 98%;
 
-    --secondary: 210 20% 96.1%;
-    --secondary-foreground: 215 30% 25%;
+    --secondary: 210 12% 97%;     /* #F0F3F8 */
+    --secondary-foreground: 215 45% 19%;
 
-    --muted: 210 20% 96.1%;
-    --muted-foreground: 220 14% 55%;  /* #7F8C8D */
+    --muted: 210 12% 97%;
+    --muted-foreground: 215 15% 45%;  /* #5F7285 */
 
-    --accent: 210 20% 96.1%;
-    --accent-foreground: 215 30% 25%;
+    --accent: 210 12% 97%;
+    --accent-foreground: 215 45% 19%;
 
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 84% 60%;     /* #EF4444 */
     --destructive-foreground: 0 0% 98%;
 
-    --border: 220 13% 91%;
-    --input: 220 13% 91%;
-    --ring: 224 71.4% 4.1%;
+    --border: 220 14% 91%;        /* #E5E7EB */
+    --input: 220 14% 91%;
+    --ring: 215 45% 19%;
 
     --radius: 0.75rem;
 
-    --sky: 204 77% 53%;       /* #3498DB */
-    --sky-hover: 204 77% 45%;
+    /* Weather-related colors */
+    --sky: 217 91% 60%;           /* #3B82F6 - vibrant blue */
+    --sky-hover: 217 91% 55%;
 
-    --orange: 28 80% 52%;     /* #E67E22 */
-    --orange-hover: 28 80% 45%;
+    --orange: 38 93% 56%;         /* #FBBF24 - warm amber */
+    --orange-hover: 38 93% 51%;
 
-    --cyan: 204 77% 53%;      /* Match sky for light mode */
-    --cyan-hover: 204 77% 45%;
+    --cyan: 217 91% 60%;          /* Match sky for light mode */
+    --cyan-hover: 217 91% 55%;
     
-    --yellow: 28 80% 52%;     /* Match orange for light mode */
-    --yellow-hover: 28 80% 45%;
+    --yellow: 38 93% 56%;         /* Match orange for light mode */
+    --yellow-hover: 38 93% 51%;
+    
+    --green: 158 64% 40%;         /* #10B981 - fresh green */
+    --green-hover: 158 64% 35%;
   }
 
   .dark {
+    /* Keep dark mode unchanged */
     --background: 217 33% 19.5%; /* #1E2A44 */
     --foreground: 210 20% 92%;   /* #E2E8F0 */
 
@@ -114,6 +120,10 @@
 
   .weather-icon-sun {
     @apply text-orange dark:text-yellow;
+  }
+  
+  .weather-icon-rain {
+    @apply text-green;
   }
 }
 
