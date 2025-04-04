@@ -8,6 +8,7 @@ import HourlyForecast from '@/components/HourlyForecast';
 import DailyForecast from '@/components/DailyForecast';
 import UnitToggle from '@/components/UnitToggle';
 import MockDataToggle from '@/components/MockDataToggle';
+import Projects from '@/components/Projects';
 import Footer from '@/components/Footer';
 
 const Index: React.FC = () => {
@@ -25,6 +26,7 @@ const Index: React.FC = () => {
               <CurrentWeather />
               <HourlyForecast />
               <DailyForecast />
+              <Projects />
             </main>
           </div>
           <Footer />
