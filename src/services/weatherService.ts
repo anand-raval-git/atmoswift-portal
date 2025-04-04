@@ -75,12 +75,21 @@ export interface WeatherResponseData {
   daily: DailyForecast[];
 }
 
-// Use a free OpenWeatherMap API key for demo purposes
-// In a production app, this would be stored securely
-const API_KEY = "84b79da5e5d7c92085660485702f4ce8";
-const BASE_URL = "https://api.openweathermap.org/data/2.5";
+const API_KEY = "130fad26310e058c659a3120edca6823";
+const STANDARD_BASE_URL = "https://api.openweathermap.org/data/2.5";
+const PRO_BASE_URL = "https://pro.openweathermap.org/data/2.5";
 
-// Helper functions
+export const EndpointTypes = {
+  STANDARD: 'standard',
+  PREMIUM: 'premium'
+} as const;
+
+export type EndpointType = typeof EndpointTypes[keyof typeof EndpointTypes];
+
+export const getBaseUrl = (endpointType: EndpointType = EndpointTypes.STANDARD): string => {
+  return endpointType === EndpointTypes.PREMIUM ? PRO_BASE_URL : STANDARD_BASE_URL;
+};
+
 const kelvinToCelsius = (kelvin: number): number => {
   return Math.round(kelvin - 273.15);
 };
@@ -91,12 +100,14 @@ const kelvinToFahrenheit = (kelvin: number): number => {
 
 export const fetchWeatherByCity = async (
   city: string,
-  units: "metric" | "imperial" = "metric"
+  units: "metric" | "imperial" = "metric",
+  endpointType: EndpointType = EndpointTypes.STANDARD
 ): Promise<WeatherResponseData | null> => {
   try {
-    // Step 1: Get coordinates for the city
+    const baseUrl = getBaseUrl(endpointType);
+    
     const geoResponse = await fetch(
-      `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(city)}&limit=1&appid=${API_KEY}`
+      `${baseUrl}/geo/1.0/direct?q=${encodeURIComponent(city)}&limit=1&appid=${API_KEY}`
     );
     
     if (!geoResponse.ok) {
@@ -112,11 +123,15 @@ export const fetchWeatherByCity = async (
     
     const { lat, lon } = geoData[0];
     
-    // Step 2: Get current weather and forecast data
-    return await fetchWeatherByCoordinates(lat, lon, units);
+    return await fetchWeatherByCoordinates(lat, lon, units, endpointType);
   } catch (error) {
     console.error("Error fetching weather data:", error);
-    toast.error("Failed to fetch weather data. Please try again later.");
+    toast.error("Failed to fetch weather data. Please try again later.", {
+      action: {
+        label: "Retry",
+        onClick: () => fetchWeatherByCity(city, units, endpointType),
+      },
+    });
     return null;
   }
 };
@@ -124,12 +139,14 @@ export const fetchWeatherByCity = async (
 export const fetchWeatherByCoordinates = async (
   lat: number,
   lon: number,
-  units: "metric" | "imperial" = "metric"
+  units: "metric" | "imperial" = "metric",
+  endpointType: EndpointType = EndpointTypes.STANDARD
 ): Promise<WeatherResponseData | null> => {
   try {
-    // Get city name from coordinates
+    const baseUrl = getBaseUrl(endpointType);
+    
     const geoResponse = await fetch(
-      `https://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=1&appid=${API_KEY}`
+      `${baseUrl}/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=1&appid=${API_KEY}`
     );
     
     if (!geoResponse.ok) {
@@ -146,9 +163,8 @@ export const fetchWeatherByCoordinates = async (
     const cityName = geoData[0].name;
     const country = geoData[0].country;
     
-    // Get current weather and forecast
     const weatherResponse = await fetch(
-      `${BASE_URL}/onecall?lat=${lat}&lon=${lon}&exclude=minutely,alerts&appid=${API_KEY}`
+      `${baseUrl}/onecall?lat=${lat}&lon=${lon}&exclude=minutely,alerts&appid=${API_KEY}`
     );
     
     if (!weatherResponse.ok) {
@@ -157,7 +173,6 @@ export const fetchWeatherByCoordinates = async (
     
     const weatherData = await weatherResponse.json();
     
-    // Format the data
     const current: WeatherData = {
       city: cityName,
       country: country,
@@ -187,7 +202,6 @@ export const fetchWeatherByCoordinates = async (
       lat: lat
     };
     
-    // Process hourly forecast
     const hourly = weatherData.hourly.slice(0, 24).map((hour: any) => ({
       dt: hour.dt,
       temp: units === "metric" 
@@ -201,7 +215,6 @@ export const fetchWeatherByCoordinates = async (
       pop: hour.pop
     }));
     
-    // Process daily forecast
     const daily = weatherData.daily.map((day: any) => ({
       dt: day.dt,
       sunrise: day.sunrise,
@@ -254,7 +267,12 @@ export const fetchWeatherByCoordinates = async (
     };
   } catch (error) {
     console.error("Error fetching weather data:", error);
-    toast.error("Failed to fetch weather data. Please try again later.");
+    toast.error("Failed to fetch weather data. Please try again later.", {
+      action: {
+        label: "Retry",
+        onClick: () => fetchWeatherByCoordinates(lat, lon, units, endpointType),
+      },
+    });
     return null;
   }
 };
@@ -312,4 +330,60 @@ export const getUVIndexLabel = (uvi: number): { label: string; color: string } =
   if (uvi <= 7) return { label: 'High', color: 'text-orange-500' };
   if (uvi <= 10) return { label: 'Very High', color: 'text-red-500' };
   return { label: 'Extreme', color: 'text-purple-500' };
+};
+
+export const fetchCurrentWeather = async (
+  city: string,
+  units: "metric" | "imperial" = "metric",
+  endpointType: EndpointType = EndpointTypes.STANDARD
+) => {
+  try {
+    const baseUrl = getBaseUrl(endpointType);
+    const response = await fetch(
+      `${baseUrl}/weather?q=${encodeURIComponent(city)}&appid=${API_KEY}&units=${units}`
+    );
+    
+    if (!response.ok) {
+      throw new Error("Failed to fetch current weather");
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching current weather:", error);
+    toast.error("Failed to fetch current weather data.", {
+      action: {
+        label: "Retry",
+        onClick: () => fetchCurrentWeather(city, units, endpointType),
+      },
+    });
+    return null;
+  }
+};
+
+export const fetchHourlyForecast = async (
+  city: string,
+  units: "metric" | "imperial" = "metric",
+  endpointType: EndpointType = EndpointTypes.STANDARD
+) => {
+  try {
+    const baseUrl = getBaseUrl(endpointType);
+    const response = await fetch(
+      `${baseUrl}/forecast?q=${encodeURIComponent(city)}&appid=${API_KEY}&units=${units}`
+    );
+    
+    if (!response.ok) {
+      throw new Error("Failed to fetch forecast data");
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching forecast data:", error);
+    toast.error("Failed to fetch forecast data.", {
+      action: {
+        label: "Retry",
+        onClick: () => fetchHourlyForecast(city, units, endpointType),
+      },
+    });
+    return null;
+  }
 };
