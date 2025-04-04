@@ -1,4 +1,3 @@
-
 import { toast } from "sonner";
 
 export interface WeatherData {
@@ -78,7 +77,7 @@ export interface WeatherResponseData {
 
 // Use a free OpenWeatherMap API key for demo purposes
 // In a production app, this would be stored securely
-const API_KEY = "3bc8f2a0452a76f2584e902af4d3f6a4";
+const API_KEY = "84b79da5e5d7c92085660485702f4ce8";
 const BASE_URL = "https://api.openweathermap.org/data/2.5";
 
 // Helper functions
