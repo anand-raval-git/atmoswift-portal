@@ -15,7 +15,7 @@ const Index: React.FC = () => {
   return (
     <ThemeProvider>
       <WeatherProvider>
-        <div className="min-h-screen flex flex-col">
+        <div className="min-h-screen flex flex-col bg-background">
           <div className="container mx-auto px-4 flex-grow">
             <Header />
             <div className="flex justify-end items-center gap-4 flex-wrap mt-4">

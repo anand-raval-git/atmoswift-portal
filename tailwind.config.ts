@@ -65,6 +65,8 @@ export default {
 				'cyan-hover': 'hsl(var(--cyan-hover))',
 				yellow: 'hsl(var(--yellow))',
 				'yellow-hover': 'hsl(var(--yellow-hover))',
+				green: 'hsl(var(--green))',
+				'green-hover': 'hsl(var(--green-hover))',
 			},
 			borderRadius: {
 				lg: 'var(--radius)',
