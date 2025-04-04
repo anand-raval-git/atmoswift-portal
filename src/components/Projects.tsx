@@ -22,17 +22,17 @@ const Projects: React.FC = () => {
       <h2 className="text-2xl font-bold mb-6 text-sky dark:text-cyan">My Projects</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {projects.map((project, index) => (
-          <Card key={index} className="glass-panel border border-muted hover:border-sky dark:hover:border-cyan transition-all duration-300">
+          <Card key={index} className="glass-panel border border-input hover:border-sky dark:hover:border-cyan transition-all duration-300">
             <CardHeader className="pb-2">
-              <CardTitle className="text-primary">{project.title}</CardTitle>
-              <CardDescription className="text-secondary">{project.description}</CardDescription>
+              <CardTitle>{project.title}</CardTitle>
+              <CardDescription>{project.description}</CardDescription>
             </CardHeader>
             <CardContent>
               <a 
                 href={project.link} 
                 target="_blank" 
                 rel="noopener noreferrer"
-                className="flex items-center gap-2 text-sky hover:text-sky-hover dark:text-cyan dark:hover:text-cyan-hover hover:underline"
+                className="flex items-center gap-2 text-sky dark:text-cyan hover:underline"
               >
                 <ExternalLink className="h-4 w-4" />
                 {project.link}
