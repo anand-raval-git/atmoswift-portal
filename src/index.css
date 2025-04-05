@@ -7,52 +7,52 @@
 
 @layer base {
   :root {
-    /* Light Mode Colors */
-    --background: 210 30% 98%;    /* #F7F9FB */
-    --foreground: 215 45% 19%;    /* #1A2E44 */
+    /* Light Mode Colors - New Color Scheme */
+    --background: 0 0% 100%;       /* #FFFFFF - Crisp White */
+    --foreground: 215 25% 27%;     /* #334155 - Slate Blue */
 
-    --card: 0 0% 100%;            /* #FFFFFF */
-    --card-foreground: 215 45% 19%;
+    --card: 210 33% 98%;           /* #F7F9FA - Light Gray */
+    --card-foreground: 215 25% 27%; /* #334155 - Slate Blue */
 
     --popover: 0 0% 100%;
-    --popover-foreground: 215 45% 19%;
+    --popover-foreground: 215 25% 27%;
 
-    --primary: 215 45% 19%;       /* #1A2E44 */
-    --primary-foreground: 210 30% 98%;
+    --primary: 215 25% 27%;        /* #334155 - Slate Blue */
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 210 12% 97%;     /* #F0F3F8 */
-    --secondary-foreground: 215 45% 19%;
+    --secondary: 210 33% 98%;      /* #F7F9FA - Light Gray */
+    --secondary-foreground: 215 25% 27%;
 
-    --muted: 210 12% 97%;
-    --muted-foreground: 215 15% 45%;  /* #5F7285 */
+    --muted: 210 33% 98%;
+    --muted-foreground: 215 20% 47%; /* #64748B - Cool Gray */
 
-    --accent: 210 12% 97%;
-    --accent-foreground: 215 45% 19%;
+    --accent: 199 89% 60%;         /* #38BDF8 - Sky Blue */
+    --accent-foreground: 215 25% 27%;
 
-    --destructive: 0 84% 60%;     /* #EF4444 */
-    --destructive-foreground: 0 0% 98%;
+    --destructive: 38 92% 50%;     /* #F59E0B - Warm Orange */
+    --destructive-foreground: 0 0% 100%;
 
-    --border: 220 14% 91%;        /* #E5E7EB */
-    --input: 220 14% 91%;
-    --ring: 215 45% 19%;
+    --border: 214 32% 91%;         /* #E2E8F0 - Faint Blue-Gray */
+    --input: 214 32% 91%;
+    --ring: 222 47% 33%;           /* #1E3A8A - Navy Blue */
 
     --radius: 0.75rem;
 
     /* Weather-related colors */
-    --sky: 217 91% 60%;           /* #3B82F6 - vibrant blue */
-    --sky-hover: 217 91% 55%;
+    --sky: 199 89% 60%;            /* #38BDF8 - Sky Blue */
+    --sky-hover: 222 47% 33%;      /* #1E3A8A - Navy Blue */
 
-    --orange: 38 93% 56%;         /* #FBBF24 - warm amber */
-    --orange-hover: 38 93% 51%;
+    --orange: 38 92% 50%;          /* #F59E0B - Warm Orange */
+    --orange-hover: 38 92% 45%;
 
-    --cyan: 217 91% 60%;          /* Match sky for light mode */
-    --cyan-hover: 217 91% 55%;
-    
-    --yellow: 38 93% 56%;         /* Match orange for light mode */
-    --yellow-hover: 38 93% 51%;
-    
-    --green: 158 64% 40%;         /* #10B981 - fresh green */
-    --green-hover: 158 64% 35%;
+    --cyan: 171 72% 50%;           /* #2DD4BF - Soft Teal */
+    --cyan-hover: 171 72% 45%;
+
+    --yellow: 38 92% 50%;          /* #F59E0B - Warm Orange */
+    --yellow-hover: 38 92% 45%;
+
+    --green: 156 64% 52%;          /* #34D399 - Light Green */
+    --green-hover: 156 64% 47%;
   }
 
   .dark {
@@ -91,23 +91,23 @@
   * {
     @apply border-border;
   }
-  
+
   html, body, #root {
     @apply h-full;
   }
-  
+
   body {
     @apply bg-background text-foreground font-opensans;
     font-size: 16px;
   }
-  
+
   h1, h2, h3, h4, h5, h6 {
     @apply font-nunito font-bold;
     font-size: 24px;
   }
 
   .glass-panel {
-    @apply bg-white/20 dark:bg-black/20 backdrop-blur-sm border border-white/30 dark:border-white/10 rounded-lg shadow-[0_2px_4px_rgba(0,0,0,0.1)] dark:shadow-lg;
+    @apply bg-card border border-border/50 dark:bg-black/20 dark:backdrop-blur-sm dark:border-white/10 rounded-lg shadow-[0_2px_4px_rgba(0,0,0,0.05)] dark:shadow-lg;
   }
 
   .card-hover {
@@ -121,7 +121,7 @@
   .weather-icon-sun {
     @apply text-orange dark:text-yellow;
   }
-  
+
   .weather-icon-rain {
     @apply text-green;
   }

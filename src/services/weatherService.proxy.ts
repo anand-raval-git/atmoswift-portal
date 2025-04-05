@@ -75,15 +75,8 @@ export interface WeatherResponseData {
   daily: DailyForecast[];
 }
 
-// Use environment variable for API key
-// This still exposes the key in client-side code, so a backend proxy is recommended for production
-const API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY || "";
-
-// Check if API key is available
-if (!API_KEY) {
-  console.error('OpenWeatherMap API key is missing. Please check your environment variables.');
-}
-const BASE_URL = "https://api.openweathermap.org/data/2.5";
+// Base URL for our proxy server
+const BASE_URL = import.meta.env.VITE_API_BASE_URL || "http://localhost:3000/api";
 
 // Helper functions
 const kelvinToCelsius = (kelvin: number): number => {
@@ -99,24 +92,24 @@ export const fetchWeatherByCity = async (
   units: "metric" | "imperial" = "metric"
 ): Promise<WeatherResponseData | null> => {
   try {
-    // Step 1: Get coordinates for the city
+    // Step 1: Get coordinates for the city using our proxy
     const geoResponse = await fetch(
-      `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(city)}&limit=1&appid=${API_KEY}`
+      `${BASE_URL}/geo/direct?q=${encodeURIComponent(city)}`
     );
-
+    
     if (!geoResponse.ok) {
       throw new Error("City not found");
     }
-
+    
     const geoData = await geoResponse.json();
-
+    
     if (!geoData || geoData.length === 0) {
       toast.error("City not found. Please try another location.");
       return null;
     }
-
+    
     const { lat, lon, name, country } = geoData[0];
-
+    
     // Step 2: Get current weather and forecast data
     return await fetchWeatherByCoordinates(lat, lon, units, name, country);
   } catch (error) {
@@ -137,62 +130,62 @@ export const fetchWeatherByCoordinates = async (
     // If city name and country are not provided, get them from coordinates
     if (!cityName || !country) {
       const geoResponse = await fetch(
-        `https://api.openweathermap.org/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=1&appid=${API_KEY}`
+        `${BASE_URL}/geo/reverse?lat=${lat}&lon=${lon}`
       );
-
+      
       if (!geoResponse.ok) {
         throw new Error("Location not found");
       }
-
+      
       const geoData = await geoResponse.json();
-
+      
       if (!geoData || geoData.length === 0) {
         toast.error("Location not found. Please try another location.");
         return null;
       }
-
+      
       cityName = geoData[0].name;
       country = geoData[0].country;
     }
 
-    // Get current weather data (using the free API endpoint)
-    const currentWeatherUrl = `${BASE_URL}/weather?lat=${lat}&lon=${lon}&appid=${API_KEY}`;
+    // Get current weather data (using the proxy)
+    const currentWeatherUrl = `${BASE_URL}/weather?lat=${lat}&lon=${lon}`;
     console.log('Fetching current weather from:', currentWeatherUrl);
-
+    
     const currentWeatherResponse = await fetch(currentWeatherUrl);
-
+    
     if (!currentWeatherResponse.ok) {
       const errorText = await currentWeatherResponse.text();
       console.error('Current Weather API Error:', currentWeatherResponse.status, errorText);
       throw new Error(`Weather data not available: ${currentWeatherResponse.status} ${errorText}`);
     }
-
+    
     const currentWeatherData = await currentWeatherResponse.json();
     console.log('Current weather data:', currentWeatherData);
-
-    // Get forecast data (using the free forecast API)
-    const forecastUrl = `${BASE_URL}/forecast?lat=${lat}&lon=${lon}&appid=${API_KEY}`;
+    
+    // Get forecast data (using the proxy)
+    const forecastUrl = `${BASE_URL}/forecast?lat=${lat}&lon=${lon}`;
     console.log('Fetching forecast from:', forecastUrl);
-
+    
     const forecastResponse = await fetch(forecastUrl);
-
+    
     if (!forecastResponse.ok) {
       const errorText = await forecastResponse.text();
       console.error('Forecast API Error:', forecastResponse.status, errorText);
       throw new Error(`Forecast data not available: ${forecastResponse.status} ${errorText}`);
     }
-
+    
     const forecastData = await forecastResponse.json();
     console.log('Forecast data:', forecastData);
-
+    
     // Format the current weather data
     const current: WeatherData = {
       city: cityName || currentWeatherData.name,
       country: country || '',
       description: currentWeatherData.weather[0].description,
       icon: currentWeatherData.weather[0].icon,
-      temp: units === "metric"
-        ? kelvinToCelsius(currentWeatherData.main.temp)
+      temp: units === "metric" 
+        ? kelvinToCelsius(currentWeatherData.main.temp) 
         : kelvinToFahrenheit(currentWeatherData.main.temp),
       feels_like: units === "metric"
         ? kelvinToCelsius(currentWeatherData.main.feels_like)
@@ -218,14 +211,14 @@ export const fetchWeatherByCoordinates = async (
       lon: lon,
       lat: lat
     };
-
+    
     // Process hourly forecast from 5-day forecast data
     // The forecast API returns data in 3-hour intervals
     // Get more hourly entries (up to 24 hours = 8 entries at 3-hour intervals)
     const hourly = forecastData.list.slice(0, 16).map((item: any) => ({
       dt: item.dt,
-      temp: units === "metric"
-        ? kelvinToCelsius(item.main.temp)
+      temp: units === "metric" 
+        ? kelvinToCelsius(item.main.temp) 
         : kelvinToFahrenheit(item.main.temp),
       feels_like: units === "metric"
         ? kelvinToCelsius(item.main.feels_like)
@@ -234,15 +227,15 @@ export const fetchWeatherByCoordinates = async (
       weather: item.weather,
       pop: item.pop || 0
     }));
-
+    
     // Process daily forecast from 5-day forecast data
     // Group forecast data by day
     const dailyMap = new Map();
-
+    
     forecastData.list.forEach((item: any) => {
       const date = new Date(item.dt * 1000);
       const day = date.toISOString().split('T')[0];
-
+      
       if (!dailyMap.has(day)) {
         dailyMap.set(day, {
           dt: item.dt,
@@ -264,47 +257,47 @@ export const fetchWeatherByCoordinates = async (
         dayData.pop = Math.max(dayData.pop, item.pop || 0);
       }
     });
-
+    
     // Convert the map to an array and format the data
     let dailyForecast = Array.from(dailyMap.values()).slice(0, 5).map((day: any) => {
       const avgTemp = day.temps.reduce((sum: number, temp: number) => sum + temp, 0) / day.temps.length;
       const avgHumidity = day.humidity.reduce((sum: number, hum: number) => sum + hum, 0) / day.humidity.length;
-
+      
       return {
         dt: day.dt,
         sunrise: currentWeatherData.sys.sunrise, // Use current day's sunrise/sunset as approximation
         sunset: currentWeatherData.sys.sunset,
         temp: {
-          day: units === "metric"
-            ? kelvinToCelsius(avgTemp)
+          day: units === "metric" 
+            ? kelvinToCelsius(avgTemp) 
             : kelvinToFahrenheit(avgTemp),
-          min: units === "metric"
-            ? kelvinToCelsius(day.temp_min)
+          min: units === "metric" 
+            ? kelvinToCelsius(day.temp_min) 
             : kelvinToFahrenheit(day.temp_min),
-          max: units === "metric"
-            ? kelvinToCelsius(day.temp_max)
+          max: units === "metric" 
+            ? kelvinToCelsius(day.temp_max) 
             : kelvinToFahrenheit(day.temp_max),
-          night: units === "metric"
+          night: units === "metric" 
             ? kelvinToCelsius(avgTemp - 5) // Approximation
             : kelvinToFahrenheit(avgTemp - 5),
-          eve: units === "metric"
+          eve: units === "metric" 
             ? kelvinToCelsius(avgTemp - 2) // Approximation
             : kelvinToFahrenheit(avgTemp - 2),
-          morn: units === "metric"
+          morn: units === "metric" 
             ? kelvinToCelsius(avgTemp - 3) // Approximation
             : kelvinToFahrenheit(avgTemp - 3),
         },
         feels_like: {
-          day: units === "metric"
+          day: units === "metric" 
             ? kelvinToCelsius(avgTemp - 1) // Approximation
             : kelvinToFahrenheit(avgTemp - 1),
-          night: units === "metric"
+          night: units === "metric" 
             ? kelvinToCelsius(avgTemp - 6) // Approximation
             : kelvinToFahrenheit(avgTemp - 6),
-          eve: units === "metric"
+          eve: units === "metric" 
             ? kelvinToCelsius(avgTemp - 3) // Approximation
             : kelvinToFahrenheit(avgTemp - 3),
-          morn: units === "metric"
+          morn: units === "metric" 
             ? kelvinToCelsius(avgTemp - 4) // Approximation
             : kelvinToFahrenheit(avgTemp - 4),
         },
@@ -315,29 +308,29 @@ export const fetchWeatherByCoordinates = async (
         pop: day.pop
       };
     });
-
+    
     // Extend forecast to 7 days by adding 2 more days with estimated data
     if (dailyForecast.length > 0) {
       const lastDay = dailyForecast[dailyForecast.length - 1];
       const lastDayDate = new Date(lastDay.dt * 1000);
-
+      
       // Add day 6
       const day6Date = new Date(lastDayDate);
       day6Date.setDate(lastDayDate.getDate() + 1);
       const day6Dt = Math.floor(day6Date.getTime() / 1000);
-
+      
       // Add day 7
       const day7Date = new Date(lastDayDate);
       day7Date.setDate(lastDayDate.getDate() + 2);
       const day7Dt = Math.floor(day7Date.getTime() / 1000);
-
+      
       // Create estimated data for days 6 and 7 based on the last available day
       // with some random variations to make it look realistic
       const createEstimatedDay = (dt: number, dayOffset: number) => {
         // Add some random variation to temperatures
         const tempVariation = Math.random() * 4 - 2; // -2 to +2 degrees
         const baseTemp = lastDay.temp.day + tempVariation;
-
+        
         return {
           dt: dt,
           sunrise: lastDay.sunrise + (dayOffset * 60), // Slight variation in sunrise/sunset times
@@ -363,13 +356,13 @@ export const fetchWeatherByCoordinates = async (
           pop: Math.max(0, Math.min(1, lastDay.pop + (Math.random() * 0.2 - 0.1))) // +/- 10%
         };
       };
-
+      
       dailyForecast.push(createEstimatedDay(day6Dt, 1));
       dailyForecast.push(createEstimatedDay(day7Dt, 2));
     }
-
+    
     const daily = dailyForecast;
-
+    
     return {
       current,
       hourly,
@@ -388,18 +381,18 @@ export const getWeatherIconUrl = (iconCode: string, size: "2x" | "4x" = "4x"): s
 
 export const formatTime = (timestamp: number, timezone: number, use12Hour = false): string => {
   const date = new Date((timestamp + timezone) * 1000);
-
+  
   if (use12Hour) {
-    return date.toLocaleTimeString('en-US', {
-      hour: 'numeric',
+    return date.toLocaleTimeString('en-US', { 
+      hour: 'numeric', 
       minute: '2-digit',
       hour12: true,
       timeZone: 'UTC'
     });
   }
-
-  return date.toLocaleTimeString('en-US', {
-    hour: '2-digit',
+  
+  return date.toLocaleTimeString('en-US', { 
+    hour: '2-digit', 
     minute: '2-digit',
     hour12: false,
     timeZone: 'UTC'
@@ -408,7 +401,7 @@ export const formatTime = (timestamp: number, timezone: number, use12Hour = fals
 
 export const formatDay = (timestamp: number, timezone: number): string => {
   const date = new Date((timestamp + timezone) * 1000);
-  return date.toLocaleDateString('en-US', {
+  return date.toLocaleDateString('en-US', { 
     weekday: 'short',
     timeZone: 'UTC'
   });
@@ -416,8 +409,8 @@ export const formatDay = (timestamp: number, timezone: number): string => {
 
 export const formatDate = (timestamp: number, timezone: number): string => {
   const date = new Date((timestamp + timezone) * 1000);
-  return date.toLocaleDateString('en-US', {
-    month: 'short',
+  return date.toLocaleDateString('en-US', { 
+    month: 'short', 
     day: 'numeric',
     timeZone: 'UTC'
   });

@@ -1,9 +1,9 @@
 
 import React, { createContext, useContext, useState, useEffect } from 'react';
-import { 
-  WeatherData, 
-  WeatherResponseData, 
-  HourlyForecast, 
+import {
+  WeatherData,
+  WeatherResponseData,
+  HourlyForecast,
   DailyForecast,
   fetchWeatherByCity,
   fetchWeatherByCoordinates
@@ -23,6 +23,8 @@ interface WeatherContextType {
   refreshWeather: () => Promise<void>;
   useMockData: boolean;
   setUseMockData: (useMock: boolean) => void;
+  searchHistory: string[];
+  clearSearchHistory: () => void;
 }
 
 const WeatherContext = createContext<WeatherContextType | null>(null);
@@ -46,10 +48,16 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({ child
     return saved ? JSON.parse(saved) : null;
   });
 
+  // Search history state
+  const [searchHistory, setSearchHistory] = useState<string[]>(() => {
+    const saved = localStorage.getItem('searchHistory');
+    return saved ? JSON.parse(saved) : [];
+  });
+
   // Update localStorage when units change
   useEffect(() => {
     localStorage.setItem('units', units);
-    
+
     // If we have a last searched location, refresh the weather with new units
     if (lastSearchedLocation && !isLoading) {
       refreshWeather();
@@ -73,6 +81,11 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
   }, [lastSearchedLocation]);
 
+  // Save search history to localStorage
+  useEffect(() => {
+    localStorage.setItem('searchHistory', JSON.stringify(searchHistory));
+  }, [searchHistory]);
+
   // Initial weather fetch
   useEffect(() => {
     const fetchInitialWeather = async () => {
@@ -80,7 +93,7 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({ child
         loadMockData();
         return;
       }
-      
+
       // If we have a last searched location, use that
       if (lastSearchedLocation) {
         if (lastSearchedLocation.type === 'city') {
@@ -106,22 +119,29 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({ child
   };
 
   const searchCity = async (city: string) => {
+    // Add to search history if not already present
+    const formattedCity = city.trim();
+    if (formattedCity && !searchHistory.includes(formattedCity)) {
+      // Keep only the last 10 searches
+      setSearchHistory(prev => [formattedCity, ...prev.slice(0, 9)]);
+    }
+
     if (useMockData) {
       loadMockData();
-      setLastSearchedLocation({ type: 'city', value: city });
+      setLastSearchedLocation({ type: 'city', value: formattedCity });
       return;
     }
-    
+
     setIsLoading(true);
     setError(null);
-    
+
     try {
-      const data = await fetchWeatherByCity(city, units);
-      
+      const data = await fetchWeatherByCity(formattedCity, units);
+
       if (data) {
         setWeatherData(data);
         setLastUpdated(new Date());
-        setLastSearchedLocation({ type: 'city', value: city });
+        setLastSearchedLocation({ type: 'city', value: formattedCity });
       }
     } catch (err) {
       setError('Failed to fetch weather data. Please try again.');
@@ -131,25 +151,31 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({ child
     }
   };
 
+  // Function to clear search history
+  const clearSearchHistory = () => {
+    setSearchHistory([]);
+    localStorage.removeItem('searchHistory');
+  };
+
   const fetchWeatherForCoordinates = async (lat: number, lon: number) => {
     if (useMockData) {
       loadMockData();
       setLastSearchedLocation({ type: 'coordinates', value: { lat, lon } });
       return;
     }
-    
+
     setIsLoading(true);
     setError(null);
-    
+
     try {
       const data = await fetchWeatherByCoordinates(lat, lon, units);
-      
+
       if (data) {
         setWeatherData(data);
         setLastUpdated(new Date());
-        setLastSearchedLocation({ 
-          type: 'coordinates', 
-          value: { lat, lon } 
+        setLastSearchedLocation({
+          type: 'coordinates',
+          value: { lat, lon }
         });
       }
     } catch (err) {
@@ -165,10 +191,10 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({ child
       loadMockData();
       return;
     }
-    
+
     setIsLoading(true);
     setError(null);
-    
+
     try {
       if (navigator.geolocation) {
         navigator.geolocation.getCurrentPosition(
@@ -234,7 +260,9 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({ child
         getCurrentLocation,
         refreshWeather,
         useMockData,
-        setUseMockData
+        setUseMockData,
+        searchHistory,
+        clearSearchHistory
       }}
     >
       {children}
@@ -244,10 +272,10 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({ child
 
 export const useWeather = (): WeatherContextType => {
   const context = useContext(WeatherContext);
-  
+
   if (!context) {
     throw new Error('useWeather must be used within a WeatherProvider');
   }
-  
+
   return context;
 };
