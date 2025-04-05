@@ -6,7 +6,9 @@ import {
   HourlyForecast,
   DailyForecast,
   fetchWeatherByCity,
-  fetchWeatherByCoordinates
+  fetchWeatherByCoordinates,
+  EndpointType,
+  EndpointTypes
 } from '../services/weatherService';
 import { getMockWeatherData } from '../utils/mockWeatherData';
 import { toast } from 'sonner';
@@ -17,14 +19,20 @@ interface WeatherContextType {
   error: string | null;
   lastUpdated: Date | null;
   units: 'metric' | 'imperial';
+  endpointType: EndpointType;
   setUnits: (units: 'metric' | 'imperial') => void;
+  setEndpointType: (endpointType: EndpointType) => void;
   searchCity: (city: string) => Promise<void>;
   getCurrentLocation: () => Promise<void>;
   refreshWeather: () => Promise<void>;
   useMockData: boolean;
   setUseMockData: (useMock: boolean) => void;
+<<<<<<< HEAD
   searchHistory: string[];
   clearSearchHistory: () => void;
+=======
+  isPremiumEnabled: boolean;
+>>>>>>> 2de44c9f5b556c2af8b3142f3d5dd8e44387c6f9
 }
 
 const WeatherContext = createContext<WeatherContextType | null>(null);
@@ -37,9 +45,16 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({ child
   const [units, setUnits] = useState<'metric' | 'imperial'>(() => {
     return localStorage.getItem('units') === 'imperial' ? 'imperial' : 'metric';
   });
+  const [endpointType, setEndpointType] = useState<EndpointType>(() => {
+    return localStorage.getItem('endpointType') === EndpointTypes.PREMIUM 
+      ? EndpointTypes.PREMIUM 
+      : EndpointTypes.STANDARD;
+  });
   const [useMockData, setUseMockData] = useState<boolean>(() => {
     return localStorage.getItem('useMockData') === 'true';
   });
+  // Premium is disabled by default - will be implemented in future
+  const [isPremiumEnabled] = useState<boolean>(false);
   const [lastSearchedLocation, setLastSearchedLocation] = useState<{
     type: 'city' | 'coordinates';
     value: string | { lat: number; lon: number };
@@ -63,6 +78,16 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({ child
       refreshWeather();
     }
   }, [units]);
+
+  // Update localStorage when endpoint type changes
+  useEffect(() => {
+    localStorage.setItem('endpointType', endpointType);
+    
+    // If we have a last searched location, refresh the weather with new endpoint type
+    if (lastSearchedLocation && !isLoading) {
+      refreshWeather();
+    }
+  }, [endpointType]);
 
   // Update localStorage when mock data preference changes
   useEffect(() => {
@@ -136,8 +161,16 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setError(null);
 
     try {
+<<<<<<< HEAD
       const data = await fetchWeatherByCity(formattedCity, units);
 
+=======
+      // Only use premium endpoint if it's enabled and selected
+      const activeEndpoint = isPremiumEnabled ? endpointType : EndpointTypes.STANDARD;
+      
+      const data = await fetchWeatherByCity(city, units, activeEndpoint);
+      
+>>>>>>> 2de44c9f5b556c2af8b3142f3d5dd8e44387c6f9
       if (data) {
         setWeatherData(data);
         setLastUpdated(new Date());
@@ -168,8 +201,16 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({ child
     setError(null);
 
     try {
+<<<<<<< HEAD
       const data = await fetchWeatherByCoordinates(lat, lon, units);
 
+=======
+      // Only use premium endpoint if it's enabled and selected
+      const activeEndpoint = isPremiumEnabled ? endpointType : EndpointTypes.STANDARD;
+      
+      const data = await fetchWeatherByCoordinates(lat, lon, units, activeEndpoint);
+      
+>>>>>>> 2de44c9f5b556c2af8b3142f3d5dd8e44387c6f9
       if (data) {
         setWeatherData(data);
         setLastUpdated(new Date());
@@ -255,14 +296,20 @@ export const WeatherProvider: React.FC<{ children: React.ReactNode }> = ({ child
         error,
         lastUpdated,
         units,
+        endpointType,
         setUnits,
+        setEndpointType,
         searchCity,
         getCurrentLocation,
         refreshWeather,
         useMockData,
         setUseMockData,
+<<<<<<< HEAD
         searchHistory,
         clearSearchHistory
+=======
+        isPremiumEnabled
+>>>>>>> 2de44c9f5b556c2af8b3142f3d5dd8e44387c6f9
       }}
     >
       {children}

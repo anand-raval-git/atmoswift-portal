@@ -75,6 +75,7 @@ export interface WeatherResponseData {
   daily: DailyForecast[];
 }
 
+<<<<<<< HEAD
 // Use environment variable for API key
 // This still exposes the key in client-side code, so a backend proxy is recommended for production
 const API_KEY = import.meta.env.VITE_OPENWEATHER_API_KEY || "";
@@ -84,8 +85,23 @@ if (!API_KEY) {
   console.error('OpenWeatherMap API key is missing. Please check your environment variables.');
 }
 const BASE_URL = "https://api.openweathermap.org/data/2.5";
+=======
+const API_KEY = "130fad26310e058c659a3120edca6823";
+const STANDARD_BASE_URL = "https://api.openweathermap.org/data/2.5";
+const PRO_BASE_URL = "https://pro.openweathermap.org/data/2.5";
 
-// Helper functions
+export const EndpointTypes = {
+  STANDARD: 'standard',
+  PREMIUM: 'premium'
+} as const;
+
+export type EndpointType = typeof EndpointTypes[keyof typeof EndpointTypes];
+
+export const getBaseUrl = (endpointType: EndpointType = EndpointTypes.STANDARD): string => {
+  return endpointType === EndpointTypes.PREMIUM ? PRO_BASE_URL : STANDARD_BASE_URL;
+};
+>>>>>>> 2de44c9f5b556c2af8b3142f3d5dd8e44387c6f9
+
 const kelvinToCelsius = (kelvin: number): number => {
   return Math.round(kelvin - 273.15);
 };
@@ -96,12 +112,14 @@ const kelvinToFahrenheit = (kelvin: number): number => {
 
 export const fetchWeatherByCity = async (
   city: string,
-  units: "metric" | "imperial" = "metric"
+  units: "metric" | "imperial" = "metric",
+  endpointType: EndpointType = EndpointTypes.STANDARD
 ): Promise<WeatherResponseData | null> => {
   try {
-    // Step 1: Get coordinates for the city
+    const baseUrl = getBaseUrl(endpointType);
+    
     const geoResponse = await fetch(
-      `https://api.openweathermap.org/geo/1.0/direct?q=${encodeURIComponent(city)}&limit=1&appid=${API_KEY}`
+      `${baseUrl}/geo/1.0/direct?q=${encodeURIComponent(city)}&limit=1&appid=${API_KEY}`
     );
 
     if (!geoResponse.ok) {
@@ -114,14 +132,26 @@ export const fetchWeatherByCity = async (
       toast.error("City not found. Please try another location.");
       return null;
     }
+<<<<<<< HEAD
 
     const { lat, lon, name, country } = geoData[0];
 
     // Step 2: Get current weather and forecast data
     return await fetchWeatherByCoordinates(lat, lon, units, name, country);
+=======
+    
+    const { lat, lon } = geoData[0];
+    
+    return await fetchWeatherByCoordinates(lat, lon, units, endpointType);
+>>>>>>> 2de44c9f5b556c2af8b3142f3d5dd8e44387c6f9
   } catch (error) {
     console.error("Error fetching weather data:", error);
-    toast.error("Failed to fetch weather data. Please try again later.");
+    toast.error("Failed to fetch weather data. Please try again later.", {
+      action: {
+        label: "Retry",
+        onClick: () => fetchWeatherByCity(city, units, endpointType),
+      },
+    });
     return null;
   }
 };
@@ -130,6 +160,7 @@ export const fetchWeatherByCoordinates = async (
   lat: number,
   lon: number,
   units: "metric" | "imperial" = "metric",
+<<<<<<< HEAD
   cityName?: string,
   country?: string
 ): Promise<WeatherResponseData | null> => {
@@ -153,6 +184,19 @@ export const fetchWeatherByCoordinates = async (
 
       cityName = geoData[0].name;
       country = geoData[0].country;
+=======
+  endpointType: EndpointType = EndpointTypes.STANDARD
+): Promise<WeatherResponseData | null> => {
+  try {
+    const baseUrl = getBaseUrl(endpointType);
+    
+    const geoResponse = await fetch(
+      `${baseUrl}/geo/1.0/reverse?lat=${lat}&lon=${lon}&limit=1&appid=${API_KEY}`
+    );
+    
+    if (!geoResponse.ok) {
+      throw new Error("Location not found");
+>>>>>>> 2de44c9f5b556c2af8b3142f3d5dd8e44387c6f9
     }
 
     // Get current weather data (using the free API endpoint)
@@ -166,6 +210,7 @@ export const fetchWeatherByCoordinates = async (
       console.error('Current Weather API Error:', currentWeatherResponse.status, errorText);
       throw new Error(`Weather data not available: ${currentWeatherResponse.status} ${errorText}`);
     }
+<<<<<<< HEAD
 
     const currentWeatherData = await currentWeatherResponse.json();
     console.log('Current weather data:', currentWeatherData);
@@ -186,6 +231,22 @@ export const fetchWeatherByCoordinates = async (
     console.log('Forecast data:', forecastData);
 
     // Format the current weather data
+=======
+    
+    const cityName = geoData[0].name;
+    const country = geoData[0].country;
+    
+    const weatherResponse = await fetch(
+      `${baseUrl}/onecall?lat=${lat}&lon=${lon}&exclude=minutely,alerts&appid=${API_KEY}`
+    );
+    
+    if (!weatherResponse.ok) {
+      throw new Error("Weather data not available");
+    }
+    
+    const weatherData = await weatherResponse.json();
+    
+>>>>>>> 2de44c9f5b556c2af8b3142f3d5dd8e44387c6f9
     const current: WeatherData = {
       city: cityName || currentWeatherData.name,
       country: country || '',
@@ -218,6 +279,7 @@ export const fetchWeatherByCoordinates = async (
       lon: lon,
       lat: lat
     };
+<<<<<<< HEAD
 
     // Process hourly forecast from 5-day forecast data
     // The forecast API returns data in 3-hour intervals
@@ -227,6 +289,14 @@ export const fetchWeatherByCoordinates = async (
       temp: units === "metric"
         ? kelvinToCelsius(item.main.temp)
         : kelvinToFahrenheit(item.main.temp),
+=======
+    
+    const hourly = weatherData.hourly.slice(0, 24).map((hour: any) => ({
+      dt: hour.dt,
+      temp: units === "metric" 
+        ? kelvinToCelsius(hour.temp) 
+        : kelvinToFahrenheit(hour.temp),
+>>>>>>> 2de44c9f5b556c2af8b3142f3d5dd8e44387c6f9
       feels_like: units === "metric"
         ? kelvinToCelsius(item.main.feels_like)
         : kelvinToFahrenheit(item.main.feels_like),
@@ -234,6 +304,7 @@ export const fetchWeatherByCoordinates = async (
       weather: item.weather,
       pop: item.pop || 0
     }));
+<<<<<<< HEAD
 
     // Process daily forecast from 5-day forecast data
     // Group forecast data by day
@@ -370,6 +441,54 @@ export const fetchWeatherByCoordinates = async (
 
     const daily = dailyForecast;
 
+=======
+    
+    const daily = weatherData.daily.map((day: any) => ({
+      dt: day.dt,
+      sunrise: day.sunrise,
+      sunset: day.sunset,
+      temp: {
+        day: units === "metric" 
+          ? kelvinToCelsius(day.temp.day) 
+          : kelvinToFahrenheit(day.temp.day),
+        min: units === "metric" 
+          ? kelvinToCelsius(day.temp.min) 
+          : kelvinToFahrenheit(day.temp.min),
+        max: units === "metric" 
+          ? kelvinToCelsius(day.temp.max) 
+          : kelvinToFahrenheit(day.temp.max),
+        night: units === "metric" 
+          ? kelvinToCelsius(day.temp.night) 
+          : kelvinToFahrenheit(day.temp.night),
+        eve: units === "metric" 
+          ? kelvinToCelsius(day.temp.eve) 
+          : kelvinToFahrenheit(day.temp.eve),
+        morn: units === "metric" 
+          ? kelvinToCelsius(day.temp.morn) 
+          : kelvinToFahrenheit(day.temp.morn),
+      },
+      feels_like: {
+        day: units === "metric" 
+          ? kelvinToCelsius(day.feels_like.day) 
+          : kelvinToFahrenheit(day.feels_like.day),
+        night: units === "metric" 
+          ? kelvinToCelsius(day.feels_like.night) 
+          : kelvinToFahrenheit(day.feels_like.night),
+        eve: units === "metric" 
+          ? kelvinToCelsius(day.feels_like.eve) 
+          : kelvinToFahrenheit(day.feels_like.eve),
+        morn: units === "metric" 
+          ? kelvinToCelsius(day.feels_like.morn) 
+          : kelvinToFahrenheit(day.feels_like.morn),
+      },
+      humidity: day.humidity,
+      weather: day.weather,
+      wind_speed: day.wind_speed,
+      wind_deg: day.wind_deg,
+      pop: day.pop
+    }));
+    
+>>>>>>> 2de44c9f5b556c2af8b3142f3d5dd8e44387c6f9
     return {
       current,
       hourly,
@@ -377,7 +496,12 @@ export const fetchWeatherByCoordinates = async (
     };
   } catch (error) {
     console.error("Error fetching weather data:", error);
-    toast.error("Failed to fetch weather data. Please try again later.");
+    toast.error("Failed to fetch weather data. Please try again later.", {
+      action: {
+        label: "Retry",
+        onClick: () => fetchWeatherByCoordinates(lat, lon, units, endpointType),
+      },
+    });
     return null;
   }
 };
@@ -435,4 +559,60 @@ export const getUVIndexLabel = (uvi: number): { label: string; color: string } =
   if (uvi <= 7) return { label: 'High', color: 'text-orange-500' };
   if (uvi <= 10) return { label: 'Very High', color: 'text-red-500' };
   return { label: 'Extreme', color: 'text-purple-500' };
+};
+
+export const fetchCurrentWeather = async (
+  city: string,
+  units: "metric" | "imperial" = "metric",
+  endpointType: EndpointType = EndpointTypes.STANDARD
+) => {
+  try {
+    const baseUrl = getBaseUrl(endpointType);
+    const response = await fetch(
+      `${baseUrl}/weather?q=${encodeURIComponent(city)}&appid=${API_KEY}&units=${units}`
+    );
+    
+    if (!response.ok) {
+      throw new Error("Failed to fetch current weather");
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching current weather:", error);
+    toast.error("Failed to fetch current weather data.", {
+      action: {
+        label: "Retry",
+        onClick: () => fetchCurrentWeather(city, units, endpointType),
+      },
+    });
+    return null;
+  }
+};
+
+export const fetchHourlyForecast = async (
+  city: string,
+  units: "metric" | "imperial" = "metric",
+  endpointType: EndpointType = EndpointTypes.STANDARD
+) => {
+  try {
+    const baseUrl = getBaseUrl(endpointType);
+    const response = await fetch(
+      `${baseUrl}/forecast?q=${encodeURIComponent(city)}&appid=${API_KEY}&units=${units}`
+    );
+    
+    if (!response.ok) {
+      throw new Error("Failed to fetch forecast data");
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error("Error fetching forecast data:", error);
+    toast.error("Failed to fetch forecast data.", {
+      action: {
+        label: "Retry",
+        onClick: () => fetchHourlyForecast(city, units, endpointType),
+      },
+    });
+    return null;
+  }
 };
