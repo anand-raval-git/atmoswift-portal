@@ -1,0 +1,74 @@
+<svg width="800" height="400" viewBox="0 0 800 400" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="800" height="400" fill="#1e293b"/>
+  
+  <!-- Title -->
+  <text x="400" y="30" text-anchor="middle" fill="#ffffff" font-size="24" font-weight="bold">
+    DevSecOps: Integrating Security in CI/CD Pipeline
+  </text>
+  
+  <!-- Application Stack -->
+  <rect x="50" y="80" width="120" height="200" fill="#334155" stroke="#64748b" stroke-width="2" rx="8"/>
+  <text x="110" y="100" text-anchor="middle" fill="#38bdf8" font-size="12" font-weight="bold">Application Stack</text>
+  
+  <!-- GitHub Icon -->
+  <circle cx="110" cy="130" r="15" fill="#ffffff"/>
+  <text x="110" y="155" text-anchor="middle" fill="#e2e8f0" font-size="10">GitHub</text>
+  
+  <!-- React Icon -->
+  <circle cx="110" cy="180" r="15" fill="#61dafb"/>
+  <text x="110" y="205" text-anchor="middle" fill="#e2e8f0" font-size="10">React</text>
+  
+  <!-- JS Icon -->
+  <rect x="95" y="215" width="30" height="20" fill="#f7df1e" rx="4"/>
+  <text x="110" y="228" text-anchor="middle" fill="#000000" font-size="10" font-weight="bold">JS</text>
+  <text x="110" y="250" text-anchor="middle" fill="#e2e8f0" font-size="10">JavaScript</text>
+  
+  <!-- Arrow 1 -->
+  <path d="M 180 180 L 220 180" stroke="#38bdf8" stroke-width="3" marker-end="url(#arrowhead)"/>
+  
+  <!-- DevSecOps Pipeline -->
+  <rect x="230" y="120" width="300" height="120" fill="#334155" stroke="#64748b" stroke-width="2" rx="8"/>
+  <text x="380" y="140" text-anchor="middle" fill="#38bdf8" font-size="12" font-weight="bold">DevSecOps pipeline</text>
+  
+  <!-- Security Tools -->
+  <circle cx="280" cy="180" r="20" fill="#10b981"/>
+  <text x="280" y="185" text-anchor="middle" fill="#ffffff" font-size="8" font-weight="bold">TRIVY</text>
+  
+  <circle cx="330" cy="180" r="20" fill="#8b5cf6"/>
+  <text x="330" y="185" text-anchor="middle" fill="#ffffff" font-size="8" font-weight="bold">OWASP</text>
+  
+  <circle cx="380" cy="180" r="20" fill="#f59e0b"/>
+  <text x="380" y="185" text-anchor="middle" fill="#ffffff" font-size="8" font-weight="bold">SONAR</text>
+  
+  <circle cx="430" cy="180" r="20" fill="#06b6d4"/>
+  <text x="430" y="185" text-anchor="middle" fill="#ffffff" font-size="8" font-weight="bold">TEST</text>
+  
+  <!-- Arrow 2 -->
+  <path d="M 540 180 L 580 180" stroke="#38bdf8" stroke-width="3" marker-end="url(#arrowhead)"/>
+  
+  <!-- Deployment -->
+  <rect x="590" y="80" width="120" height="200" fill="#334155" stroke="#64748b" stroke-width="2" rx="8"/>
+  <text x="650" y="100" text-anchor="middle" fill="#38bdf8" font-size="12" font-weight="bold">Deployment</text>
+  
+  <!-- Docker -->
+  <rect x="620" y="130" width="60" height="40" fill="#2496ed" rx="8"/>
+  <text x="650" y="155" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="bold">Docker</text>
+  
+  <!-- Access Control -->
+  <rect x="620" y="190" width="60" height="40" fill="#f97316" rx="8"/>
+  <text x="650" y="215" text-anchor="middle" fill="#ffffff" font-size="10" font-weight="bold">Access</text>
+  
+  <!-- Arrow marker definition -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" 
+     refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#38bdf8"/>
+    </marker>
+  </defs>
+  
+  <!-- Flow descriptions -->
+  <text x="400" y="350" text-anchor="middle" fill="#94a3b8" font-size="12">
+    Secure Development → Automated Testing → Container Deployment → Controlled Access
+  </text>
+</svg>

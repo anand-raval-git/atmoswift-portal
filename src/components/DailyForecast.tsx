@@ -9,12 +9,10 @@ const DailyForecast: React.FC = () => {
   
   if (isLoading) {
     return (
-      <div className="glass-panel p-4 mt-4 animate-pulse">
-        <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded-md mb-4 w-36"></div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4">
-          {Array(4).fill(0).map((_, i) => (
-            <div key={i} className="h-36 bg-gray-200 dark:bg-gray-700 rounded-md"></div>
-          ))}
+      <div className="glass-panel p-4 mt-4 animate-fade-in">
+        <div className="flex items-center justify-center h-20">
+          <div className="loading-spinner w-6 h-6"></div>
+          <span className="ml-3 text-muted-foreground">Loading 7-day forecast...</span>
         </div>
       </div>
     );
@@ -48,9 +46,10 @@ const DailyForecast: React.FC = () => {
           const sunsetTime = formatTime(day.sunset, current.timezone, true);
           
           return (
-            <div 
-              key={index} 
-              className="bg-background/50 rounded-lg p-4 card-hover"
+            <div
+              key={index}
+              className="bg-background/50 rounded-lg p-4 hover-lift hover:bg-background/70 transition-all duration-300 animate-fade-in"
+              style={{ animationDelay: `${index * 100}ms` }}
             >
               <div className="flex justify-between items-center mb-2">
                 <div>

@@ -18,12 +18,10 @@ const HourlyForecast: React.FC = () => {
   
   if (isLoading) {
     return (
-      <div className="glass-panel p-4 mt-4 animate-pulse">
-        <div className="h-6 bg-gray-200 dark:bg-gray-700 rounded-md mb-4 w-36"></div>
-        <div className="flex gap-4 overflow-x-auto pb-2">
-          {Array(8).fill(0).map((_, i) => (
-            <div key={i} className="flex-shrink-0 w-20 h-28 bg-gray-200 dark:bg-gray-700 rounded-md"></div>
-          ))}
+      <div className="glass-panel p-4 mt-4 animate-fade-in">
+        <div className="flex items-center justify-center h-20">
+          <div className="loading-spinner w-6 h-6"></div>
+          <span className="ml-3 text-muted-foreground">Loading hourly forecast...</span>
         </div>
       </div>
     );
@@ -67,9 +65,10 @@ const HourlyForecast: React.FC = () => {
           const pop = Math.round(hour.pop * 100); // Probability of precipitation
           
           return (
-            <div 
-              key={index} 
-              className="flex-shrink-0 flex flex-col items-center p-3 bg-background/50 rounded-lg card-hover min-w-[5rem]"
+            <div
+              key={index}
+              className="flex-shrink-0 flex flex-col items-center p-3 bg-background/50 rounded-lg hover-lift hover:bg-background/70 transition-all duration-300 min-w-[5rem] animate-slide-in"
+              style={{ animationDelay: `${index * 50}ms` }}
             >
               <span className="text-sm font-medium">
                 {index === 0 ? 'Now' : time}

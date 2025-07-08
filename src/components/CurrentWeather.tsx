@@ -17,13 +17,10 @@ const CurrentWeather: React.FC = () => {
   
   if (isLoading) {
     return (
-      <div className="glass-panel p-6 animate-pulse">
-        <div className="h-10 bg-gray-200 dark:bg-gray-700 rounded-md mb-4 w-2/3 mx-auto"></div>
-        <div className="h-20 bg-gray-200 dark:bg-gray-700 rounded-md mb-4"></div>
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-          {Array(6).fill(0).map((_, i) => (
-            <div key={i} className="h-16 bg-gray-200 dark:bg-gray-700 rounded-md"></div>
-          ))}
+      <div className="glass-panel p-6 animate-fade-in">
+        <div className="flex items-center justify-center h-32">
+          <div className="loading-spinner w-8 h-8"></div>
+          <span className="ml-3 text-muted-foreground">Loading weather data...</span>
         </div>
       </div>
     );
@@ -88,43 +85,43 @@ const CurrentWeather: React.FC = () => {
       </div>
       
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-        <div className="flex flex-col items-center p-3 bg-background/50 rounded-lg">
+        <div className="flex flex-col items-center p-3 bg-background/50 rounded-lg hover-lift hover:bg-background/70 transition-all duration-300">
           <Thermometer className="h-6 w-6 mb-1 text-sky dark:text-cyan" />
           <span className="text-xs text-muted-foreground">UV Index</span>
           <span className={`text-sm font-semibold ${uvIndex.color}`}>
             {current.uvi ? Math.round(current.uvi) : 'N/A'} - {uvIndex.label}
           </span>
         </div>
-        
-        <div className="flex flex-col items-center p-3 bg-background/50 rounded-lg">
+
+        <div className="flex flex-col items-center p-3 bg-background/50 rounded-lg hover-lift hover:bg-background/70 transition-all duration-300">
           <Droplets className="h-6 w-6 mb-1 text-sky dark:text-cyan" />
           <span className="text-xs text-muted-foreground">Humidity</span>
           <span className="text-sm font-semibold">{current.humidity}%</span>
         </div>
-        
-        <div className="flex flex-col items-center p-3 bg-background/50 rounded-lg">
+
+        <div className="flex flex-col items-center p-3 bg-background/50 rounded-lg hover-lift hover:bg-background/70 transition-all duration-300">
           <Wind className="h-6 w-6 mb-1 text-sky dark:text-cyan" />
           <span className="text-xs text-muted-foreground">Wind</span>
           <span className="text-sm font-semibold">
             {windSpeed} {speedUnit} {getWindDirection(current.wind_deg)}
           </span>
         </div>
-        
-        <div className="flex flex-col items-center p-3 bg-background/50 rounded-lg">
+
+        <div className="flex flex-col items-center p-3 bg-background/50 rounded-lg hover-lift hover:bg-background/70 transition-all duration-300">
           <Eye className="h-6 w-6 mb-1 text-sky dark:text-cyan" />
           <span className="text-xs text-muted-foreground">Visibility</span>
           <span className="text-sm font-semibold">
             {current.visibility ? `${Math.round(current.visibility / 1000)} km` : 'N/A'}
           </span>
         </div>
-        
-        <div className="flex flex-col items-center p-3 bg-background/50 rounded-lg">
+
+        <div className="flex flex-col items-center p-3 bg-background/50 rounded-lg hover-lift hover:bg-background/70 transition-all duration-300">
           <Sunrise className="h-6 w-6 mb-1 text-orange dark:text-yellow" />
           <span className="text-xs text-muted-foreground">Sunrise</span>
           <span className="text-sm font-semibold">{sunriseTime}</span>
         </div>
-        
-        <div className="flex flex-col items-center p-3 bg-background/50 rounded-lg">
+
+        <div className="flex flex-col items-center p-3 bg-background/50 rounded-lg hover-lift hover:bg-background/70 transition-all duration-300">
           <Sunset className="h-6 w-6 mb-1 text-orange dark:text-yellow" />
           <span className="text-xs text-muted-foreground">Sunset</span>
           <span className="text-sm font-semibold">{sunsetTime}</span>

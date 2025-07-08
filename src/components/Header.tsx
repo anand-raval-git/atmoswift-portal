@@ -53,7 +53,7 @@ const Header: React.FC = () => {
           SkyPulse Weather
         </h1>
         <p className="text-xs md:text-sm text-muted-foreground">
-          Built and Deployed by Anand Raval using OpenWeatherMap API
+          Built by Shivit using OpenWeatherMap API and Deployed by Anand Raval With Devops Best Practices
         </p>
       </div>
 

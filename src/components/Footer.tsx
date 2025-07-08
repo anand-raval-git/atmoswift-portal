@@ -10,7 +10,7 @@ const Footer: React.FC = () => {
           <div className="flex flex-col md:flex-row justify-between items-center gap-2">
             <div>
               <p className="text-sm text-muted-foreground text-center md:text-left">
-                © {new Date().getFullYear()} SkyPulse Weather. Built and Deployed by Anand Raval using OpenWeatherMap API.
+                © {new Date().getFullYear()} SkyPulse Weather. Deployed with a DevSecOps Pipeline.
               </p>
             </div>
           </div>
@@ -80,6 +80,13 @@ const Footer: React.FC = () => {
               </ul>
             </div>
           </div>
+        </div>
+
+        {/* Attribution */}
+        <div className="mt-6 pt-4 border-t border-border/50">
+          <p className="text-center text-xs text-muted-foreground">
+            Built by Shivit using OpenWeatherMap API and Deployed by Anand Raval with DevSecOps best practices
+          </p>
         </div>
       </div>
     </footer>
