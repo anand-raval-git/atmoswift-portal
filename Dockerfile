@@ -17,8 +17,8 @@ RUN npm install
 COPY . .
 
 # Expose port 8080 for Vite dev server
-EXPOSE 8080
+EXPOSE 8000
 
 # Start the frontend on port 8080
-CMD ["npm", "run", "dev", "--", "--port", "8080", "--host"]
+CMD ["npm", "run", "dev", "--", "--port", "8000", "--host"]
 
